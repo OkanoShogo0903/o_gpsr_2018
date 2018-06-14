@@ -1,33 +1,35 @@
-# Speech Person Recognition 2018
+# Speech Person Recognition 2018 in Canada
 ## Writter
-1. Enomoto
-2. Okano
+1. Okano
+2. Enomoto
+
 ## Use
-1. Connect Realsence
-2. Human detector activate
-3. Command controler
-4. Finally,execute spr
 ~~~
+1. Connect Realsence
 $ roslaunch realsense realsense_r200_launch.launch
 
+2. Human detector activate
 $ cd ~/catkin_ws/src/e_human_detector/darknet
 $ rosrun e_human_detector e_human_detector.py
 
+3. 3D Rider activate
+$ roslaunch turtlebot_bringup 3dsensor.launch
+
+4. Base activate
+$ roslaunch turtlebot_bringup minimal.launch
+
+5. Command controler activate
+$ cd ~/catkin_ws/src/CommandControler/scripts/
+$ python CommandControler.py
+
+6. Speech Recognition (Google Speech API)
 $ python ~/catkin_ws/src/speech_recog/scripts/speech_recog_normal.py
-$ python ~/catkin_ws/src/CommandControl/scripts/CommandControl.py
 
-$ python ~/catkin_ws/src/tm_speech_person_recognition/scripts/spr.py
+7. Finally,execute GPSR
+$ python ~/catkin_ws/src/tm_speech_person_recognition/scripts/gpsr.py
 ~~~
-## Memo 
-activate:  
-'$ crowd_list_req_pub.py'
-
+## Memo
+~~~
 Human detecter topic:  
-'$ rostopic pub /human_detect_req std_msgs/Bool "data: false"'
-
-3D Rider activate:  
-'$ roslaunch turtlebot_bringup 3dsensor.launch'
-
-Base activate:  
-'$ roslaunch turtlebot_bringup minimal.launch'
-
+$ rostopic pub /human_detect_req std_msgs/Bool "data: false"
+~~~

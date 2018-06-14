@@ -6,6 +6,7 @@ import time
 from std_msgs.msg import String, Float64,Bool
 import subprocess
 from geometry_msgs.msg import Twist
+import google_tts
 
 class GeneralPurposeServiceRobot:
     def __init__(self):
@@ -27,12 +28,14 @@ class GeneralPurposeServiceRobot:
 
     def recogVoiceWordCB(self,sentence):
         ''' receive result word in speech_recog/scripts/speech_recog_normal.py '''
-        if main_state == 1: # do not speak when robot move
-            if self.is_do_not_send_command == False:
+        print('recogVoiceWordCB')
+        if self.is_do_not_send_command == False:
+            if main_state == 1: # do not speak when robot move
+                self.is_do_not_send_command = True
                 print "Q : " + sentence.data
+                print "send riddle request."
                 #self.recog_word = sentence
                 self.task_pub.publish(sentence.data)
-                print "send riddle request."
     
 
     def setIsActionSuccessCB(self,is_complete):
@@ -55,12 +58,16 @@ class GeneralPurposeServiceRobot:
 
 
     def speak(self,sentence):
-        try:
-            voice_cmd = '/usr/bin/picospeaker %s' %sentence
-            subprocess.call(voice_cmd.strip().split(' '))
-            print "[PICO] " + sentence
-        except OSError:
-            print "[PICO] Speacker is not activate. Or not installed picospeaker."
+        IS_USE_GOOGLE_TTS = True
+        if IS_USE_GOOGLE_TTS:
+            google_tts.say(sentence)
+        else:
+            try:
+                voice_cmd = '/usr/bin/picospeaker %s' %sentence
+                subprocess.call(voice_cmd.strip().split(' '))
+                print "[PICO] " + sentence
+            except OSError:
+                print "[PICO] Speacker is not activate. Or not installed picospeaker."
 
 
     def sound(self):
@@ -93,23 +100,22 @@ class GeneralPurposeServiceRobot:
         '''
         print 'state : 1'
         self.speak("I'm ready")
-        rospy.sleep(3.0)
+        rospy.sleep(4.0)
         self.speak("Let give me a task")
-        rospy.sleep(3.0)
+        rospy.sleep(4.0)
         self.speak("Please speak after the signal")
-        time.sleep(3.0)
+        time.sleep(4.0)
         self.sound()
+        time.sleep(1.5)
         #self.speech_req_pub.Publish(True) # start GoogleSpeechAPI
 
-        # loop 3 times
-        TASK_LIMIT = 3
+        TASK_LIMIT = 3 # loop 3 times
         reply = 0
         failure = 0
         while reply < TASK_LIMIT:
             if self.is_action_result != None:
-                self.is_do_not_send_command = True
+                self.is_action_result = None
                 print "count : " + str(reply)
-                rospy.sleep(1.0) # wait rotate
 
                 if self.is_action_result is True: # Action success.
                     failure = 0
@@ -120,10 +126,11 @@ class GeneralPurposeServiceRobot:
                         failure = 0
                         reply += 1
 
+                # Wait for do not get own voice!!!
+                time.sleep(5.0) # <-------------------- Very important. For do not get own voice
                 if reply != TASK_LIMIT: # sound
-                    rospy.sleep(2.0)
                     self.sound()
-                self.is_action_result = None
+                time.sleep(2.0)
                 self.is_do_not_send_command = False
         return 2 # next state
 
