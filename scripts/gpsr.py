@@ -58,7 +58,7 @@ class GeneralPurposeServiceRobot:
         try:
             voice_cmd = '/usr/bin/picospeaker %s' %sentence
             subprocess.call(voice_cmd.strip().split(' '))
-            print "[PICO]" + sentence
+            print "[PICO] " + sentence
         except OSError:
             print "[PICO] Speacker is not activate. Or not installed picospeaker."
 
@@ -94,7 +94,7 @@ class GeneralPurposeServiceRobot:
         print 'state : 1'
         self.speak("I'm ready")
         rospy.sleep(3.0)
-        self.speak("Please give me a task")
+        self.speak("Let give me a task")
         rospy.sleep(3.0)
         self.speak("Please speak after the signal")
         time.sleep(3.0)
@@ -134,7 +134,9 @@ class GeneralPurposeServiceRobot:
         '''
         print 'state : 2'
         self.speak("I did all tasks")
+        time.sleep(1.5)
         self.speak("I will go to the entrance")
+        time.sleep(1.5)
         '''
         navigation_req = String()
         navigation_req.data = 'entrance'
