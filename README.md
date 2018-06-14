@@ -38,7 +38,7 @@ $ python ~/catkin_ws/src/tm_speech_person_recognition/scripts/gpsr.py
 ```
 
 ---------------------------------------------------------------------------
-## hogehoge
+## HotReference:fire:
 ~~~
 1. Connect Realsence
 $ roslaunch realsense realsense_r200_launch.launch
